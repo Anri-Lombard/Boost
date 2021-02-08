@@ -9,7 +9,7 @@ public class Rocket : MonoBehaviour
     AudioSource audioSource;
 
     [SerializeField] float rcsThrust = 300f;
-    [SerializeField] float mainThrust = 40f;
+    [SerializeField] float mainThrust = 600f;
 
     // Start is called before the first frame update
     void Start()
@@ -30,9 +30,21 @@ public class Rocket : MonoBehaviour
         Rotate();
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        switch (collision.gameObject.tag)
+        {
+            case "Friendly":
+                print("OK");
+                break;
+            default:
+                print("Dead");
+                break;
+        }
+    }
+
     private void Rotate()
     {
-        rigidBody.freezeRotation = true;
 
         float rotationThisFrame = rcsThrust * Time.deltaTime;
 
@@ -44,8 +56,6 @@ public class Rocket : MonoBehaviour
         {
             transform.Rotate(-Vector3.forward * rotationThisFrame);
         }
-
-        rigidBody.freezeRotation = false;
     }
 
     private void Thrust()
