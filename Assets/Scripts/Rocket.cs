@@ -8,6 +8,9 @@ public class Rocket : MonoBehaviour
     Rigidbody rigidBody;
     AudioSource audioSource;
 
+    [SerializeField] float rcsThrust = 300f;
+    [SerializeField] float mainThrust = 40f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,23 +26,33 @@ public class Rocket : MonoBehaviour
 
     private void ProcessInput()
     {
-        PlaySoundWithThrust();
+        Thrust();
+        Rotate();
+    }
+
+    private void Rotate()
+    {
+        rigidBody.freezeRotation = true;
+
+        float rotationThisFrame = rcsThrust * Time.deltaTime;
 
         if (Input.GetKey(KeyCode.A))
         {
-            transform.Rotate(Vector3.forward);
+            transform.Rotate(Vector3.forward * rotationThisFrame);
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            transform.Rotate(Vector3.back);
+            transform.Rotate(-Vector3.forward * rotationThisFrame);
         }
+
+        rigidBody.freezeRotation = false;
     }
 
-    private void PlaySoundWithThrust()
+    private void Thrust()
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            rigidBody.AddRelativeForce(Vector3.up);
+            rigidBody.AddRelativeForce(Vector3.up * mainThrust);
             if (!audioSource.isPlaying)
             {
                 audioSource.Play();
