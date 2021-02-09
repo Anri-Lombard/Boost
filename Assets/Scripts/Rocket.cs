@@ -45,6 +45,7 @@ public class Rocket : MonoBehaviour
 
     private void Rotate()
     {
+        rigidBody.freezeRotation = true;
 
         float rotationThisFrame = rcsThrust * Time.deltaTime;
 
@@ -56,6 +57,8 @@ public class Rocket : MonoBehaviour
         {
             transform.Rotate(-Vector3.forward * rotationThisFrame);
         }
+
+        rigidBody.freezeRotation = false;
     }
 
     private void Thrust()
