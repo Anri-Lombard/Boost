@@ -53,6 +53,7 @@ public class Rocket : MonoBehaviour
 
     private void StartDeathSequence()
     {
+        explosionParticles.Play();
         audioSource.Stop();
         audioClipSound = explosion;
         audioSource.PlayOneShot(audioClipSound);
@@ -61,6 +62,7 @@ public class Rocket : MonoBehaviour
 
     private void StartSuccessSequence()
     {
+        successParticles.Play();
         audioSource.Stop();
         audioClipSound = success;
         audioSource.PlayOneShot(audioClipSound);
@@ -95,12 +97,13 @@ public class Rocket : MonoBehaviour
         if (Input.GetKey(KeyCode.Space))
         {
             engineParticles.Play();
-            rigidBody.AddRelativeForce(Vector3.up * mainThrust);
+            rigidBody.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime);
             if (!audioSource.isPlaying)
             {
                 audioClipSound = mainEngine;
                 audioSource.PlayOneShot(audioClipSound);
             }
+            engineParticles.Play();
         }
         else
         {
@@ -108,6 +111,7 @@ public class Rocket : MonoBehaviour
             {
                 audioSource.Stop();
             }
+            engineParticles.Stop();
         }
     }
 }
