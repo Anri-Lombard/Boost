@@ -10,7 +10,7 @@ public class Rocket : MonoBehaviour
     SceneLoader sceneLoader;
     AudioClip audioClipSound;
 
-    [SerializeField] float rcsThrust = 300f, mainThrust = 600f;
+    [SerializeField] float rcsThrust = 300f, mainThrust = 35f * 100;
     [SerializeField] AudioClip mainEngine, explosion, success;
     [SerializeField] ParticleSystem engineParticles;
     [SerializeField] ParticleSystem successParticles;
@@ -58,6 +58,13 @@ public class Rocket : MonoBehaviour
         audioClipSound = explosion;
         audioSource.PlayOneShot(audioClipSound);
         StartCoroutine(sceneLoader.Restart());
+        StartCoroutine(WaitAndStopExplosionParticles());
+    }
+
+    IEnumerator WaitAndStopExplosionParticles()
+    {
+        yield return new WaitForSeconds(1f);
+        explosionParticles.Stop();
     }
 
     private void StartSuccessSequence()
@@ -67,6 +74,13 @@ public class Rocket : MonoBehaviour
         audioClipSound = success;
         audioSource.PlayOneShot(audioClipSound);
         StartCoroutine(sceneLoader.LoadNextScene());
+        StartCoroutine(WaitAndStopSuccessParticles());
+    }
+
+    IEnumerator WaitAndStopSuccessParticles()
+    {
+        yield return new WaitForSeconds(1f);
+        explosionParticles.Stop();
     }
 
     private void RespondToRotateInput()

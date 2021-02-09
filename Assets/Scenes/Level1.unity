@@ -235,7 +235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06603a11ed60444d58722b139c8da702, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementVector: {x: 40, y: 0, z: 0}
+  movementVector: {x: 15, y: 0, z: 0}
   period: 5
   movementFactor: 0
 --- !u!1001 &275716055
@@ -988,7 +988,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5087491238212218582, guid: e939483e4cf9e46a1ae1d1434400edd7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.1
+      value: -5
       objectReference: {fileID: 0}
     - target: {fileID: 5087491238212218582, guid: e939483e4cf9e46a1ae1d1434400edd7, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2378,7 +2378,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1118984931381955791, guid: 2523b0bced34c40ce857fd21283eecc3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10.318652
+      value: -17.7
       objectReference: {fileID: 0}
     - target: {fileID: 1118984931381955791, guid: 2523b0bced34c40ce857fd21283eecc3, type: 3}
       propertyPath: m_LocalPosition.y
