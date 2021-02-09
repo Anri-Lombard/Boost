@@ -9,8 +9,8 @@ public class Rocket : MonoBehaviour
     AudioSource audioSource;
     SceneLoader sceneLoader;
 
-    [SerializeField] float rcsThrust = 300f;
-    [SerializeField] float mainThrust = 600f;
+    [SerializeField] float rcsThrust = 300f, mainThrust = 600f;
+    [SerializeField] AudioClip mainEngine, explosion, success;
 
     // Start is called before the first frame update
     void Start()
@@ -28,8 +28,8 @@ public class Rocket : MonoBehaviour
 
     private void ProcessInput()
     {
-        Thrust();
-        Rotate();
+        RespondToThrustInput();
+        RespondToRotateInput();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -40,15 +40,17 @@ public class Rocket : MonoBehaviour
                 print("OK");
                 break;
             case "Finish":
-                sceneLoader.LoadNextScene();
+                audioSource.PlayOneShot(success);
+                StartCoroutine(sceneLoader.LoadNextScene());
                 break;
             default:
-                print("Dead");
+                audioSource.PlayOneShot(explosion);
+                StartCoroutine(sceneLoader.Restart());
                 break;
         }
     }
 
-    private void Rotate()
+    private void RespondToRotateInput()
     {
         rigidBody.freezeRotation = true;
 
@@ -66,14 +68,19 @@ public class Rocket : MonoBehaviour
         rigidBody.freezeRotation = false;
     }
 
-    private void Thrust()
+    private void RespondToThrustInput()
+    {
+        MainEngineSound();
+    }
+
+    private void MainEngineSound()
     {
         if (Input.GetKey(KeyCode.Space))
         {
             rigidBody.AddRelativeForce(Vector3.up * mainThrust);
             if (!audioSource.isPlaying)
             {
-                audioSource.Play();
+                audioSource.PlayOneShot(mainEngine);
             }
         }
         else
