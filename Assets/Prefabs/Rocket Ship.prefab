@@ -277,6 +277,9 @@ MonoBehaviour:
   mainEngine: {fileID: 8300000, guid: 0fb9240ea18ba40479530dc0f490875f, type: 3}
   explosion: {fileID: 8300000, guid: 1ca7b929a449b4a3bb56c749be23c655, type: 3}
   success: {fileID: 8300000, guid: e0e7f190e38f842ca867ea2338c6834f, type: 3}
+  engineParticles: {fileID: 198100719057022332, guid: a3553fd250eb92d4091bebde350c6739, type: 3}
+  explosionParticles: {fileID: 198204746014789312, guid: ab79a37535b979f48b6de56e3a0a5cb0, type: 3}
+  successParticles: {fileID: 198631066050499358, guid: 62198a3a5dbb64a4f9e1618929224faa, type: 3}
 --- !u!1 &5087491239568712547
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,9 +8,13 @@ public class Rocket : MonoBehaviour
     Rigidbody rigidBody;
     AudioSource audioSource;
     SceneLoader sceneLoader;
+    AudioClip audioClipSound;
 
     [SerializeField] float rcsThrust = 300f, mainThrust = 600f;
     [SerializeField] AudioClip mainEngine, explosion, success;
+    [SerializeField] ParticleSystem engineParticles;
+    [SerializeField] ParticleSystem successParticles;
+    [SerializeField] ParticleSystem explosionParticles;
 
     // Start is called before the first frame update
     void Start()
@@ -37,17 +41,30 @@ public class Rocket : MonoBehaviour
         switch (collision.gameObject.tag)
         {
             case "Friendly":
-                print("OK");
                 break;
             case "Finish":
-                audioSource.PlayOneShot(success);
-                StartCoroutine(sceneLoader.LoadNextScene());
+                StartSuccessSequence();
                 break;
             default:
-                audioSource.PlayOneShot(explosion);
-                StartCoroutine(sceneLoader.Restart());
+                StartDeathSequence();
                 break;
         }
+    }
+
+    private void StartDeathSequence()
+    {
+        audioSource.Stop();
+        audioClipSound = explosion;
+        audioSource.PlayOneShot(audioClipSound);
+        StartCoroutine(sceneLoader.Restart());
+    }
+
+    private void StartSuccessSequence()
+    {
+        audioSource.Stop();
+        audioClipSound = success;
+        audioSource.PlayOneShot(audioClipSound);
+        StartCoroutine(sceneLoader.LoadNextScene());
     }
 
     private void RespondToRotateInput()
@@ -77,15 +94,20 @@ public class Rocket : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {
+            engineParticles.Play();
             rigidBody.AddRelativeForce(Vector3.up * mainThrust);
             if (!audioSource.isPlaying)
             {
-                audioSource.PlayOneShot(mainEngine);
+                audioClipSound = mainEngine;
+                audioSource.PlayOneShot(audioClipSound);
             }
         }
         else
         {
-            audioSource.Stop();
+            if (audioClipSound == mainEngine)
+            {
+                audioSource.Stop();
+            }
         }
     }
 }
