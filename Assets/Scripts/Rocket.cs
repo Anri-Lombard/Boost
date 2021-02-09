@@ -7,6 +7,7 @@ public class Rocket : MonoBehaviour
 {
     Rigidbody rigidBody;
     AudioSource audioSource;
+    SceneLoader sceneLoader;
 
     [SerializeField] float rcsThrust = 300f;
     [SerializeField] float mainThrust = 600f;
@@ -16,6 +17,7 @@ public class Rocket : MonoBehaviour
     {
         rigidBody = GetComponent<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
+        sceneLoader = new SceneLoader();
     }
 
     // Update is called once per frame
@@ -36,6 +38,9 @@ public class Rocket : MonoBehaviour
         {
             case "Friendly":
                 print("OK");
+                break;
+            case "Finish":
+                sceneLoader.LoadNextScene();
                 break;
             default:
                 print("Dead");
