@@ -2,26 +2,26 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour
 {
     Rigidbody rigidBody;
     AudioSource audioSource;
-    SceneLoader sceneLoader;
     AudioClip audioClipSound;
 
     [SerializeField] float rcsThrust = 300f, mainThrust = 35f * 100;
     [SerializeField] AudioClip mainEngine, explosion, success;
-    [SerializeField] ParticleSystem engineParticles;
-    [SerializeField] ParticleSystem successParticles;
-    [SerializeField] ParticleSystem explosionParticles;
+    [SerializeField] ParticleSystem engineParticles, successParticles, explosionParticles;
+
+    int sceneIndex;
 
     // Start is called before the first frame update
     void Start()
     {
+        sceneIndex = SceneManager.GetActiveScene().buildIndex;
         rigidBody = GetComponent<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
-        sceneLoader = new SceneLoader();
     }
 
     // Update is called once per frame
@@ -53,11 +53,12 @@ public class Rocket : MonoBehaviour
 
     private void StartDeathSequence()
     {
+        Instantiate(explosionParticles, new Vector3(0, 0, 0), Quaternion.identity);
         explosionParticles.Play();
         audioSource.Stop();
         audioClipSound = explosion;
         audioSource.PlayOneShot(audioClipSound);
-        StartCoroutine(sceneLoader.Restart());
+        StartCoroutine(Restart());
         StartCoroutine(WaitAndStopExplosionParticles());
     }
 
@@ -73,7 +74,7 @@ public class Rocket : MonoBehaviour
         audioSource.Stop();
         audioClipSound = success;
         audioSource.PlayOneShot(audioClipSound);
-        StartCoroutine(sceneLoader.LoadNextScene());
+        StartCoroutine(LoadNextScene());
         StartCoroutine(WaitAndStopSuccessParticles());
     }
 
@@ -127,5 +128,21 @@ public class Rocket : MonoBehaviour
             }
             engineParticles.Stop();
         }
+    }
+
+    IEnumerator LoadNextScene()
+    {
+        yield return new WaitForSeconds(1f);
+        if (sceneIndex == 4)
+        {
+            sceneIndex = -1;
+        }
+        SceneManager.LoadScene(sceneIndex + 1);
+    }
+
+    IEnumerator Restart()
+    {
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene(sceneIndex);
     }
 }
