@@ -18,7 +18,8 @@ public class Oscillator : MonoBehaviour
     }
 
     private void Update()
-    { 
+    {
+        if (period <= Mathf.Epsilon) { return; } // Epsilon smallest we could represent.
         float cycles = Time.time / period;
 
         const float tau = Mathf.PI * 2; // Tau is 2 PI
