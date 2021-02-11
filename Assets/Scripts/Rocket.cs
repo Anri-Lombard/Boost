@@ -41,12 +41,7 @@ public class Rocket : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.L))
         {
-            if (sceneIndex == SceneManager.sceneCountInBuildSettings - 1)
-            {
-                SceneManager.LoadScene(0);
-                return;
-            }
-            SceneManager.LoadScene(sceneIndex + 1);
+            LoadNextScene();
         }
         else if (Input.GetKeyDown(KeyCode.C))
         {
@@ -54,7 +49,7 @@ public class Rocket : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.R))
         {
-            SceneManager.LoadScene(sceneIndex);
+            RestartScene();
         }
     }
 
@@ -90,7 +85,7 @@ public class Rocket : MonoBehaviour
         audioSource.Stop();
         audioClipSound = explosion;
         audioSource.PlayOneShot(audioClipSound);
-        StartCoroutine(Restart());
+        StartCoroutine(InitiateRestart());
         StartCoroutine(WaitAndStopExplosionParticles());
     }
 
@@ -106,7 +101,7 @@ public class Rocket : MonoBehaviour
         audioSource.Stop();
         audioClipSound = success;
         audioSource.PlayOneShot(audioClipSound);
-        StartCoroutine(LoadNextScene());
+        StartCoroutine(InitiateLoadNextScene());
         StartCoroutine(WaitAndStopSuccessParticles());
     }
 
@@ -118,7 +113,7 @@ public class Rocket : MonoBehaviour
 
     private void RespondToRotateInput()
     {
-        rigidBody.freezeRotation = true;
+        rigidBody.angularVelocity = Vector3.zero; // Remove rotation due to physics.
 
         float rotationThisFrame = rcsThrust * Time.deltaTime;
 
@@ -130,8 +125,6 @@ public class Rocket : MonoBehaviour
         {
             transform.Rotate(-Vector3.forward * rotationThisFrame);
         }
-
-        rigidBody.freezeRotation = false;
     }
 
     private void RespondToThrustInput()
@@ -143,28 +136,43 @@ public class Rocket : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            engineParticles.Play();
-            rigidBody.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime);
-            if (!audioSource.isPlaying)
-            {
-                audioClipSound = mainEngine;
-                audioSource.PlayOneShot(audioClipSound);
-            }
-            engineParticles.Play();
+            Thrust();
         }
         else
         {
-            if (audioClipSound == mainEngine)
-            {
-                audioSource.Stop();
-            }
-            engineParticles.Stop();
+            DoNotThrust();
         }
     }
 
-    IEnumerator LoadNextScene()
+    private void DoNotThrust()
+    {
+        if (audioClipSound == mainEngine)
+        {
+            audioSource.Stop();
+        }
+        engineParticles.Stop();
+    }
+
+    private void Thrust()
+    {
+        engineParticles.Play();
+        rigidBody.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime);
+        if (!audioSource.isPlaying)
+        {
+            audioClipSound = mainEngine;
+            audioSource.PlayOneShot(audioClipSound);
+        }
+        engineParticles.Play();
+    }
+
+    IEnumerator InitiateLoadNextScene()
     {
         yield return new WaitForSeconds(1f);
+        LoadNextScene();
+    }
+
+    private void LoadNextScene()
+    {
         if (sceneIndex == SceneManager.sceneCountInBuildSettings - 1)
         {
             sceneIndex = -1;
@@ -172,9 +180,14 @@ public class Rocket : MonoBehaviour
         SceneManager.LoadScene(sceneIndex + 1);
     }
 
-    IEnumerator Restart()
+    IEnumerator InitiateRestart()
     {
         yield return new WaitForSeconds(1f);
+        RestartScene();
+    }
+
+    private void RestartScene()
+    {
         SceneManager.LoadScene(sceneIndex);
     }
 }
