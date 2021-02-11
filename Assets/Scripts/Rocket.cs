@@ -9,12 +9,14 @@ public class Rocket : MonoBehaviour
     Rigidbody rigidBody;
     AudioSource audioSource;
     AudioClip audioClipSound;
+    MeshCollider meshCollider;
 
     [SerializeField] float rcsThrust = 300f, mainThrust = 35f * 100;
     [SerializeField] AudioClip mainEngine, explosion, success;
     [SerializeField] ParticleSystem engineParticles, successParticles, explosionParticles;
 
     int sceneIndex;
+    bool collisionsAreEnabled = true;
 
     // Start is called before the first frame update
     void Start()
@@ -22,12 +24,38 @@ public class Rocket : MonoBehaviour
         sceneIndex = SceneManager.GetActiveScene().buildIndex;
         rigidBody = GetComponent<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
+        meshCollider = GameObject.Find("Body").GetComponent<MeshCollider>();
     }
 
     // Update is called once per frame
     void Update()
     {
         ProcessInput();
+        if (Debug.isDebugBuild)
+        {
+            RespondToDebugKeys();
+        }
+    }
+
+    private void RespondToDebugKeys()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            if (sceneIndex == SceneManager.sceneCountInBuildSettings - 1)
+            {
+                SceneManager.LoadScene(0);
+                return;
+            }
+            SceneManager.LoadScene(sceneIndex + 1);
+        }
+        else if (Input.GetKeyDown(KeyCode.C))
+        {
+            collisionsAreEnabled = !collisionsAreEnabled;
+        }
+        else if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(sceneIndex);
+        }
     }
 
     private void ProcessInput()
@@ -38,6 +66,8 @@ public class Rocket : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (collisionsAreEnabled == false) { return; }
+
         switch (collision.gameObject.tag)
         {
             case "Friendly":
@@ -50,6 +80,8 @@ public class Rocket : MonoBehaviour
                 break;
         }
     }
+
+    
 
     private void StartDeathSequence()
     {
@@ -133,7 +165,7 @@ public class Rocket : MonoBehaviour
     IEnumerator LoadNextScene()
     {
         yield return new WaitForSeconds(1f);
-        if (sceneIndex == 4)
+        if (sceneIndex == SceneManager.sceneCountInBuildSettings - 1)
         {
             sceneIndex = -1;
         }
